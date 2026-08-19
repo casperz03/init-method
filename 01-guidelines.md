@@ -1,30 +1,30 @@
 # 01 · Guidelines
 
-Dokument referencyjny do wklejenia jako kontekst projektu (CLAUDE.md / notatka w narzędziu AI). Obowiązuje przy każdym projekcie klienckim w ramach INIT Method. Uzupełnij [`04-context.md`](04-context.md) danymi konkretnego projektu — ten plik zawiera zasady stałe, niezależne od klienta.
+Dokument referencyjny do wklejenia jako kontekst projektu (CLAUDE.md / notatka w narzędziu AI). Obowiązuje przy każdym projekcie klienckim w ramach INIT Method. Uzupełnij [`04-context.md`](04-context.md) danymi konkretnego projektu - ten plik zawiera zasady stałe, niezależne od klienta.
 
-**Uwaga o aktualności:** sekcje *SEO pod AI (GEO)*, *Prawo* i *Cloudflare* opisują szybko zmieniający się stan — zweryfikuj je przy większej rewizji dokumentu.
+**Uwaga o aktualności:** sekcje *SEO pod AI (GEO)*, *Prawo* i *Cloudflare* opisują szybko zmieniający się stan - zweryfikuj je przy większej rewizji dokumentu.
 
 ## Stack
 
 | Warstwa | Narzędzie | Rola |
 |---|---|---|
-| Framework | **Astro**, `output: 'static'` | SSG — HTML w całości w buildzie, zero JS domyślnie |
+| Framework | **Astro**, `output: 'static'` | SSG - HTML w całości w buildzie, zero JS domyślnie |
 | Style | **Vanilla CSS** | CSS Nesting, custom properties, bez frameworków (Bootstrap/Tailwind) |
-| Animacje | **GSAP** (+ ScrollTrigger) | Jedyna sankcjonowana biblioteka JS poza vanilla — do scroll-triggered i złożonych animacji |
+| Animacje | **GSAP** (+ ScrollTrigger) | Jedyna sankcjonowana biblioteka JS poza vanilla - do scroll-triggered i złożonych animacji |
 | CMS | **Decap CMS** (backend `github` + OAuth-proxy na Cloudflare Worker) | Edycja treści przez klienta, commit do repo, bez Netlify |
 | Treść | **Astro Content Collections** + Zod | Walidacja frontmatteru, typowany dostęp do treści z Decap |
 | Hosting | **Cloudflare Pages** | Build z gita, edge CDN, darmowy tier bez limitu requestów |
 | DNS / SSL / WAF | **Cloudflare** | Domena, certyfikaty, ochrona przed botami/DDoS |
 | Audyt SEO | **DataForSEO** | Narzędzie procesowe (workflow), nie zależność runtime |
 
-Domyślny wybór: **Astro static + Cloudflare Pages** dla całego katalogu projektów (strony wizytówkowe/ofertowe/blogi). SSR (adapter `@astrojs/cloudflare`, Workers) tylko gdy projekt tego realnie wymaga — patrz sekcja 13.
+Domyślny wybór: **Astro static + Cloudflare Pages** dla całego katalogu projektów (strony wizytówkowe/ofertowe/blogi). SSR (adapter `@astrojs/cloudflare`, Workers) tylko gdy projekt tego realnie wymaga - patrz sekcja 13.
 
 ## 1. Zasady ogólne
 
-- **DRY** — trzeci powtórzony blok = wydziel komponent `.astro`/zmienną CSS.
-- **KISS** — brak abstrakcji i bibliotek tam, gdzie wystarczy vanilla JS/CSS lub natywne API przeglądarki.
-- **Mobile-first** — style od najmniejszego viewportu w górę (`min-width` w media queries).
-- **Zgodność ze standardami** — aktualna specyfikacja HTML/CSS/JS, Core Web Vitals, Google Search Central.
+- **DRY** - trzeci powtórzony blok = wydziel komponent `.astro`/zmienną CSS.
+- **KISS** - brak abstrakcji i bibliotek tam, gdzie wystarczy vanilla JS/CSS lub natywne API przeglądarki.
+- **Mobile-first** - style od najmniejszego viewportu w górę (`min-width` w media queries).
+- **Zgodność ze standardami** - aktualna specyfikacja HTML/CSS/JS, Core Web Vitals, Google Search Central.
 
 ## 2. Struktura projektu
 
@@ -39,7 +39,7 @@ Domyślny wybór: **Astro static + Cloudflare Pages** dla całego katalogu proje
 ├── src/
 │   ├── assets/              # obrazy przetwarzane przez Astro (astro:assets)
 │   ├── components/
-│   ├── content/             # Content Collections — tu commituje Decap
+│   ├── content/             # Content Collections - tu commituje Decap
 │   │   └── config.ts        # schematy Zod
 │   ├── layouts/
 │   ├── pages/
@@ -50,8 +50,8 @@ Domyślny wybór: **Astro static + Cloudflare Pages** dla całego katalogu proje
 └── tsconfig.json
 ```
 
-- `src/pages/` wymagany — brak = brak routingu.
-- Własny kod (CSS/JS) zawsze w `src/`, nigdy w `public/` — tylko wtedy Astro go zbunduje i zoptymalizuje.
+- `src/pages/` wymagany - brak = brak routingu.
+- Własny kod (CSS/JS) zawsze w `src/`, nigdy w `public/` - tylko wtedy Astro go zbunduje i zoptymalizuje.
 - `public/` wyłącznie dla plików trafiających 1:1 do builda.
 
 **Konfiguracja bazowa (`astro.config.mjs`):**
@@ -61,10 +61,10 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://domena.pl',    // WYMAGANE — bez tego sitemap i canonicale wskażą na localhost
-  trailingSlash: 'always',       // jedna, spójna forma URL — trzymaj się konsekwentnie
+  site: 'https://domena.pl',    // WYMAGANE - bez tego sitemap i canonicale wskażą na localhost
+  trailingSlash: 'always',       // jedna, spójna forma URL - trzymaj się konsekwentnie
   integrations: [sitemap()],
-  // adapter NIE jest potrzebny dla output: 'static' — Cloudflare Pages serwuje build bezpośrednio
+  // adapter NIE jest potrzebny dla output: 'static' - Cloudflare Pages serwuje build bezpośrednio
 });
 ```
 
@@ -77,8 +77,8 @@ export default defineConfig({
 | Pliki komponentów Astro | PascalCase | `Header.astro`, `ContactForm.astro` |
 | Selektory pod JS | prefiks `js-` | `.js-toggle-menu` |
 
-- Wszystkie nazwy (zmienne, klasy, ID, funkcje) — **zawsze po angielsku**. Wyjątek: anchory URL istotne SEO/UX dla PL-użytkownika (`#cennik`, `#kontakt`).
-- **JS nigdy nie odwołuje się do `id`** — zawsze dedykowana klasa `js-*`, oddzielona od klas stylistycznych. Zmiana stylu nie może przypadkiem zerwać skryptu i odwrotnie.
+- Wszystkie nazwy (zmienne, klasy, ID, funkcje) - **zawsze po angielsku**. Wyjątek: anchory URL istotne SEO/UX dla PL-użytkownika (`#cennik`, `#kontakt`).
+- **JS nigdy nie odwołuje się do `id`** - zawsze dedykowana klasa `js-*`, oddzielona od klas stylistycznych. Zmiana stylu nie może przypadkiem zerwać skryptu i odwrotnie.
 
 ```html
 <!-- źle -->
@@ -90,14 +90,14 @@ export default defineConfig({
 <script>document.querySelector('.js-menu-toggle')...</script>
 ```
 
-## 4. HTML — semantyka
+## 4. HTML - semantyka
 
 - Tagi HTML5: `header`, `nav`, `main`, `section`, `article`, `aside`, `footer`, `figure`, `time`, `dialog`.
 - Jeden `h1` na stronę, logiczna kolejność `h2 → h3` bez przeskoków.
 - `alt` na każdym obrazie treściowym (`alt=""` dla dekoracyjnych).
 - Formularze: `<label for="">` powiązane z polem, `required`, `autocomplete`, właściwy `type`.
 
-## 5. CSS — vanilla, nowoczesny
+## 5. CSS - vanilla, nowoczesny
 
 - Bez frameworków (Bootstrap/Tailwind), chyba że projekt tego jawnie wymaga.
 - **CSS Nesting** natywny (bez preprocesora):
@@ -111,7 +111,7 @@ export default defineConfig({
 }
 ```
 
-- Jednostki świadomie: `rem` (typografia/spacing), `%`/`fr` (siatki), `svh/dvh` (pełnoekranowe sekcje — `dvh` zamiast `vh` na mobile, unika skoku przez pasek adresu), `clamp()` (płynna typografia bez sterty media queries), `min()`/`max()`.
+- Jednostki świadomie: `rem` (typografia/spacing), `%`/`fr` (siatki), `svh/dvh` (pełnoekranowe sekcje - `dvh` zamiast `vh` na mobile, unika skoku przez pasek adresu), `clamp()` (płynna typografia bez sterty media queries), `min()`/`max()`.
 - Layout: flexbox/grid zamiast floatów/absolute tam, gdzie możliwe.
 
 **Custom properties w `:root`** (raz w `src/styles/global.css`, nigdy nie hardkoduj wartości w wielu plikach):
@@ -146,18 +146,18 @@ export default defineConfig({
 
 Konwencja: `--kategoria-wariant`, kebab-case, po angielsku.
 
-## 6. JavaScript — vanilla + GSAP
+## 6. JavaScript - vanilla + GSAP
 
-- `const`/`let` wyłącznie — zero `var`.
+- `const`/`let` wyłącznie - zero `var`.
 - `querySelector`/`querySelectorAll`, nie `getElementById`.
 - Nowoczesna składnia: arrow functions, template literals, destructuring, `async/await`, moduły ES, `?.`, `??`.
-- Jedyne źródło prawdy dla API/składni: **MDN** — nie kopiuj z blogów/SO bez weryfikacji.
+- Jedyne źródło prawdy dla API/składni: **MDN** - nie kopiuj z blogów/SO bez weryfikacji.
 - Interakcje zawsze przez `.js-*` (sekcja 3).
 
-**GSAP — standard stacku, nie wyjątek:**
+**GSAP - standard stacku, nie wyjątek:**
 
-- Do prostych przejść/hover/fade — zawsze czysty CSS (`transition`, `@keyframes`), taniej niż JS.
-- GSAP + `ScrollTrigger` — do scroll-triggered animacji, timeline'ów, złożonych sekwencji. **Wymaga jawnej rejestracji pluginu** przed użyciem, inaczej nie działa (bez błędu w konsoli — po prostu cicho nic się nie animuje):
+- Do prostych przejść/hover/fade - zawsze czysty CSS (`transition`, `@keyframes`), taniej niż JS.
+- GSAP + `ScrollTrigger` - do scroll-triggered animacji, timeline'ów, złożonych sekwencji. **Wymaga jawnej rejestracji pluginu** przed użyciem, inaczej nie działa (bez błędu w konsoli - po prostu cicho nic się nie animuje):
 
 ```js
 import { gsap } from 'gsap';
@@ -165,8 +165,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 ```
 
-- Ładuj tylko na stronach, które faktycznie animacji używają — nie globalnie do każdej podstrony (waga pliku wpływa na CWV).
-- **Musi respektować `prefers-reduced-motion`** — GSAP nie robi tego automatycznie:
+- Ładuj tylko na stronach, które faktycznie animacji używają - nie globalnie do każdej podstrony (waga pliku wpływa na CWV).
+- **Musi respektować `prefers-reduced-motion`** - GSAP nie robi tego automatycznie:
 
 ```js
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -175,7 +175,7 @@ if (!prefersReducedMotion) {
 }
 ```
 
-**Gotcha: Astro View Transitions + GSAP.** Jeśli projekt używa `<ClientRouter />` (View Transitions), `DOMContentLoaded` odpala się tylko raz — przy kolejnych nawigacjach nie. Inicjalizuj GSAP/ScrollTrigger na evencie `astro:page-load`, nie `DOMContentLoaded`, inaczej animacje przestają działać po pierwszej nawigacji SPA-like.
+**Gotcha: Astro View Transitions + GSAP.** Jeśli projekt używa `<ClientRouter />` (View Transitions), `DOMContentLoaded` odpala się tylko raz - przy kolejnych nawigacjach nie. Inicjalizuj GSAP/ScrollTrigger na evencie `astro:page-load`, nie `DOMContentLoaded`, inaczej animacje przestają działać po pierwszej nawigacji SPA-like.
 
 **Ładowanie skryptów:** domyślnie `defer` (nie blokuje parsowania, dostęp do pełnego DOM). `async` tylko dla niezależnych od DOM/kolejności (analytics). Nigdy `<script>` bez `async`/`defer` w `<head>`. Komponenty `.astro` ze `<script>` są domyślnie bundlowane jako moduły (`type="module"`, efektywnie `defer`).
 
@@ -194,30 +194,30 @@ if (!prefersReducedMotion) {
 }
 ```
 
-- `interface` — kształty obiektów, propsy komponentów. `type` — unie, przecięcia, aliasy.
-- Unikaj `enum` (nieintuicyjne zachowanie) — używaj union literal types (`type Theme = 'light' | 'dark'`) lub `as const` + `typeof`.
+- `interface` - kształty obiektów, propsy komponentów. `type` - unie, przecięcia, aliasy.
+- Unikaj `enum` (nieintuicyjne zachowanie) - używaj union literal types (`type Theme = 'light' | 'dark'`) lub `as const` + `typeof`.
 - `unknown` zamiast `any` dla danych z zewnątrz przed walidacją. `satisfies` zamiast `as`. `import type` dla importów wyłącznie-typów.
-- Unikaj non-null assertion (`!`) — sprawdzaj jawnie (`if`, `?.`).
-- Dane z zewnątrz (formularz, CMS, API) — Zod + `z.infer<typeof schema>`, typ i walidacja nigdy się nie rozjeżdżają.
+- Unikaj non-null assertion (`!`) - sprawdzaj jawnie (`if`, `?.`).
+- Dane z zewnątrz (formularz, CMS, API) - Zod + `z.infer<typeof schema>`, typ i walidacja nigdy się nie rozjeżdżają.
 
 ## 8. Wydajność / Core Web Vitals
 
 - Obrazy poniżej foldu: `loading="lazy"`. Obraz LCP (hero): **bez** lazy, `loading="eager"` + `fetchpriority="high"`.
-- `width`/`height` (lub `aspect-ratio`) na każdym obrazie — zapobiega CLS.
-- `astro:assets` (`<Image />`) zamiast surowych `<img>` z `public/`, gdzie to możliwe — auto AVIF/WebP, `srcset`.
+- `width`/`height` (lub `aspect-ratio`) na każdym obrazie - zapobiega CLS.
+- `astro:assets` (`<Image />`) zamiast surowych `<img>` z `public/`, gdzie to możliwe - auto AVIF/WebP, `srcset`.
 
 ```astro
 ---
 import { Image } from 'astro:assets';
 import heroImage from '../assets/hero.jpg';
 ---
-<!-- LCP — priorytetowo -->
+<!-- LCP - priorytetowo -->
 <Image src={heroImage} alt="Opis" widths={[400, 800, 1200]} sizes="(max-width: 768px) 100vw, 1200px" loading="eager" fetchpriority="high" format="avif" />
 <!-- poniżej foldu -->
 <Image src={heroImage} alt="Opis" loading="lazy" format="webp" />
 ```
 
-- Fonty: self-hosted (bez CDN — szybciej, bez dodatkowego DNS, bez transferu IP do zewnętrznego serwera → RODO), `.woff2`, variable font, `font-display: swap`, `preload` tylko dla fontu krytycznego.
+- Fonty: self-hosted (bez CDN - szybciej, bez dodatkowego DNS, bez transferu IP do zewnętrznego serwera → RODO), `.woff2`, variable font, `font-display: swap`, `preload` tylko dla fontu krytycznego.
 - Cel: LCP < 2.5s, INP < 200ms, CLS < 0.1 (Lighthouse / PageSpeed Insights).
 
 ## 9. SEO
@@ -227,7 +227,7 @@ import heroImage from '../assets/hero.jpg';
 - Semantyczny URL (kebab-case, bez zbędnych parametrów).
 - JSON-LD tam, gdzie dotyczy: `LocalBusiness`, `Article`, `FAQPage`, `BreadcrumbList`.
 - `robots.txt` + `sitemap.xml` (`@astrojs/sitemap`).
-- **Self-canonical domyślnie na każdej podstronie** — generowany automatycznie z `Astro.url` + `site`, nie ręcznie. Wyjątek: świadome duplikaty (filtr/sortowanie, wersja do druku, UTM) → canonical wskazuje wersję główną.
+- **Self-canonical domyślnie na każdej podstronie** - generowany automatycznie z `Astro.url` + `site`, nie ręcznie. Wyjątek: świadome duplikaty (filtr/sortowanie, wersja do druku, UTM) → canonical wskazuje wersję główną.
 
 **Komponent `SEOHead.astro`** (jeden punkt prawdy, zamiast duplikować meta tagi na każdej stronie):
 
@@ -262,11 +262,11 @@ const ogImage = new URL(image, Astro.site).href;
 
 ## 10. Lokalne SEO (projekty dla lokalnych firm)
 
-- **NAP spójny** (Name, Address, Phone) — identyczne dane firmy na stronie, w stopce, w Google Business Profile i innych wizytówkach (Panorama Firm, Facebook). Niespójność to jeden z najczęstszych błędów obniżających lokalny ranking.
-- Nazwa miasta/regionu naturalnie w `title`/`h1`/treści kluczowych podstron — bez keyword stuffingu.
+- **NAP spójny** (Name, Address, Phone) - identyczne dane firmy na stronie, w stopce, w Google Business Profile i innych wizytówkach (Panorama Firm, Facebook). Niespójność to jeden z najczęstszych błędów obniżających lokalny ranking.
+- Nazwa miasta/regionu naturalnie w `title`/`h1`/treści kluczowych podstron - bez keyword stuffingu.
 - Google Business Profile założony/zweryfikowany, powiązany z tą samą domeną.
 - Mapa Google osadzona na stronie kontaktowej (embed z prawidłowym adresem).
-- Pełny adres, telefon, godziny — w tekście, nie tylko na obrazku.
+- Pełny adres, telefon, godziny - w tekście, nie tylko na obrazku.
 - Sekcja opinii/referencji klientów widoczna na stronie, jeśli dotyczy.
 
 **Schema `LocalBusiness`:**
@@ -317,7 +317,7 @@ const ogImage = new URL(image, Astro.site).href;
 }
 ```
 
-- **`prefers-reduced-motion`** — globalny fallback w `global.css`:
+- **`prefers-reduced-motion`** - globalny fallback w `global.css`:
 
 ```css
 @media (prefers-reduced-motion: reduce) {
@@ -330,11 +330,11 @@ const ogImage = new URL(image, Astro.site).href;
 }
 ```
 
-GSAP tego nie respektuje automatycznie — sprawdzaj jawnie w JS (sekcja 6).
+GSAP tego nie respektuje automatycznie - sprawdzaj jawnie w JS (sekcja 6).
 
 ## 12. Bezpieczeństwo
 
-**Nagłówki** — plik `public/_headers` (Cloudflare Pages czyta ten sam format co Netlify):
+**Nagłówki** - plik `public/_headers` (Cloudflare Pages czyta ten sam format co Netlify):
 
 ```
 /*
@@ -347,26 +347,26 @@ GSAP tego nie respektuje automatycznie — sprawdzaj jawnie w JS (sekcja 6).
 ```
 
 - **Cloudflare dashboard, SSL/TLS → Overview:** tryb **Full (strict)**. **Edge Certificates:** Always Use HTTPS = on. HSTS włączaj dopiero po potwierdzeniu, że wszystkie subdomeny wspierają HTTPS (preload jest trudny do cofnięcia).
-- **WAF managed rules + Bot Fight Mode** — włącz w dashboardzie, darmowe na każdym planie, minimalny wysiłek za realną ochronę.
+- **WAF managed rules + Bot Fight Mode** - włącz w dashboardzie, darmowe na każdym planie, minimalny wysiłek za realną ochronę.
 - SRI (`integrity` + `crossorigin`) przy skryptach z zewnętrznego CDN.
 - **Formularze:** honeypot jako pierwsza linia obrony przed spamem, walidacja client + service-side (Web3Forms/Formspree).
-- Żaden sekret w kodzie/commitach — zmienne środowiskowe w Cloudflare Pages (dashboard → Settings → Environment variables). `PUBLIC_*` trafia do bundla JS wysyłanego do przeglądarki — traktuj jako jawne.
+- Żaden sekret w kodzie/commitach - zmienne środowiskowe w Cloudflare Pages (dashboard → Settings → Environment variables). `PUBLIC_*` trafia do bundla JS wysyłanego do przeglądarki - traktuj jako jawne.
 - `npm audit` cyklicznie, zwłaszcza przed przekazaniem projektu.
 
 ## 13. Renderowanie: SSG domyślnie
 
 **Treść, która ma być zaindeksowana, nigdy nie może zależeć wyłącznie od JS po stronie klienta (CSR).**
 
-- **SSG** (`output: 'static'`, domyślne) — strona wizytówkowa/ofertowa/blog → zawsze. Zero JS wymagane do zobaczenia treści, najlepsze pod SEO i CWV.
-- **SSR** (adapter `@astrojs/cloudflare`, Cloudflare Workers) — tylko gdy treść realnie zależy od requestu/sesji (panel klienta, dane real-time). Zmienia strukturę deploy (Workers zamiast czystego Pages) — decyzja świadoma, nie domyślna.
+- **SSG** (`output: 'static'`, domyślne) - strona wizytówkowa/ofertowa/blog → zawsze. Zero JS wymagane do zobaczenia treści, najlepsze pod SEO i CWV.
+- **SSR** (adapter `@astrojs/cloudflare`, Cloudflare Workers) - tylko gdy treść realnie zależy od requestu/sesji (panel klienta, dane real-time). Zmienia strukturę deploy (Workers zamiast czystego Pages) - decyzja świadoma, nie domyślna.
 - Astro Islands: reszta strony to statyczny HTML, JS tylko lokalnie na interaktywnych fragmentach (`client:visible`, `client:idle`).
 
 ## 14. SEO pod AI/LLM (GEO)
 
-- Treść w HTML, nie tylko w JS — wiele crawlerów AI nie wykonuje JavaScriptu (patrz sekcja 13).
-- Jasna hierarchia nagłówków — modele segmentują treść po `h1→h2→h3`.
-- Jedna jednoznaczna odpowiedź na pytanie w jednym akapicie — zwiększa szansę cytowania w AI Overviews/ChatGPT.
-- JSON-LD (`FAQPage`, `HowTo`, `LocalBusiness`) — bezpośredni sygnał dla modeli, czym jest dana treść:
+- Treść w HTML, nie tylko w JS - wiele crawlerów AI nie wykonuje JavaScriptu (patrz sekcja 13).
+- Jasna hierarchia nagłówków - modele segmentują treść po `h1→h2→h3`.
+- Jedna jednoznaczna odpowiedź na pytanie w jednym akapicie - zwiększa szansę cytowania w AI Overviews/ChatGPT.
+- JSON-LD (`FAQPage`, `HowTo`, `LocalBusiness`) - bezpośredni sygnał dla modeli, czym jest dana treść:
 
 ```astro
 <script type="application/ld+json" set:html={JSON.stringify({
@@ -380,9 +380,9 @@ GSAP tego nie respektuje automatycznie — sprawdzaj jawnie w JS (sekcja 6).
 })} />
 ```
 
-- `public/llms.txt` — nieformalny standard wskazujący modelom najważniejsze treści (nie zastępuje `robots.txt`, tylko uzupełnia).
+- `public/llms.txt` - nieformalny standard wskazujący modelom najważniejsze treści (nie zastępuje `robots.txt`, tylko uzupełnia).
 
-**`robots.txt`** — domyślnie wpuszczaj wszystko (klasyczne wyszukiwarki + boty AI search-time i treningowe), ogranicz świadomie per projekt:
+**`robots.txt`** - domyślnie wpuszczaj wszystko (klasyczne wyszukiwarki + boty AI search-time i treningowe), ogranicz świadomie per projekt:
 
 ```
 User-agent: *
@@ -394,25 +394,25 @@ Disallow: /*?utm_
 Sitemap: https://TWOJA-DOMENA.pl/sitemap-index.xml
 ```
 
-Jeśli klient nie chce treści w zbiorach treningowych AI, ale ma zostać widoczny w cytowaniach: `Disallow: /` dla `GPTBot`, `ClaudeBot`, `Google-Extended` — zostaw `Allow: /` dla `OAI-SearchBot`, `ChatGPT-User`, `Claude-SearchBot`, `PerplexityBot`.
+Jeśli klient nie chce treści w zbiorach treningowych AI, ale ma zostać widoczny w cytowaniach: `Disallow: /` dla `GPTBot`, `ClaudeBot`, `Google-Extended` - zostaw `Allow: /` dla `OAI-SearchBot`, `ChatGPT-User`, `Claude-SearchBot`, `PerplexityBot`.
 
-⚠️ Każda dyrektywa musi należeć do grupy pod `User-agent:` — luźne `Disallow:` bez nagłówka grupy są ignorowane.
+⚠️ Każda dyrektywa musi należeć do grupy pod `User-agent:` - luźne `Disallow:` bez nagłówka grupy są ignorowane.
 
 ## 15. Prawo: RODO, EAA, cookies
 
-Nie jest to porada prawna — przypadki graniczne konsultuj z prawnikiem.
+Nie jest to porada prawna - przypadki graniczne konsultuj z prawnikiem.
 
-- **Polityka prywatności** — obowiązkowa, jeśli strona zbiera jakiekolwiek dane (formularz kontaktowy też). Zawiera: administratora, cel i podstawę prawną (art. 6 RODO), okres przechowywania, odbiorców danych, prawa osoby.
-- **Klauzula RODO (art. 13)** przy formularzu — krótka, bezpośrednio przy polu, nie tylko link.
-- Checkboxy zgód — zawsze **opt-in**, nigdy domyślnie zaznaczone.
-- **Cookies** — banner z granulacją (niezbędne / analityczne / marketingowe), skrypty trackingowe (GA4, Meta Pixel) ładowane dopiero **po** zgodzie, nie przed.
-  - Rozważ **Cloudflare Web Analytics** zamiast/obok GA4 — cookieless, nie wymaga bannera zgody dla samego trackingu ruchu.
-- **EAA** — obowiązuje od 28.06.2025 w UE, dotyczy usług B2C. Mikroprzedsiębiorstwa (<10 zatrudnionych, obrót/suma bilansowa <2 mln EUR) zwolnione — zaznacz to klientowi, nie zakładaj automatycznie. Standard referencyjny: WCAG 2.1 AA (pokrywa się z sekcją 11).
-- **Regulamin** — wymagany tylko przy sprzedaży/koncie użytkownika, nie przy zwykłej wizytówce.
+- **Polityka prywatności** - obowiązkowa, jeśli strona zbiera jakiekolwiek dane (formularz kontaktowy też). Zawiera: administratora, cel i podstawę prawną (art. 6 RODO), okres przechowywania, odbiorców danych, prawa osoby.
+- **Klauzula RODO (art. 13)** przy formularzu - krótka, bezpośrednio przy polu, nie tylko link.
+- Checkboxy zgód - zawsze **opt-in**, nigdy domyślnie zaznaczone.
+- **Cookies** - banner z granulacją (niezbędne / analityczne / marketingowe), skrypty trackingowe (GA4, Meta Pixel) ładowane dopiero **po** zgodzie, nie przed.
+  - Rozważ **Cloudflare Web Analytics** zamiast/obok GA4 - cookieless, nie wymaga bannera zgody dla samego trackingu ruchu.
+- **EAA** - obowiązuje od 28.06.2025 w UE, dotyczy usług B2C. Mikroprzedsiębiorstwa (<10 zatrudnionych, obrót/suma bilansowa <2 mln EUR) zwolnione - zaznacz to klientowi, nie zakładaj automatycznie. Standard referencyjny: WCAG 2.1 AA (pokrywa się z sekcją 11).
+- **Regulamin** - wymagany tylko przy sprzedaży/koncie użytkownika, nie przy zwykłej wizytówce.
 
 ## 16. Decap CMS
 
-Backend `github` (OAuth przez własny Cloudflare Worker jako proxy — **nie** `git-gateway`, który wymaga Netlify Identity i wprowadzałby zależność od Netlify w stacku czysto-Cloudflare).
+Backend `github` (OAuth przez własny Cloudflare Worker jako proxy - **nie** `git-gateway`, który wymaga Netlify Identity i wprowadzałby zależność od Netlify w stacku czysto-Cloudflare).
 
 `public/admin/config.yml`:
 
@@ -422,7 +422,7 @@ backend:
   repo: nazwa-org/nazwa-repo
   branch: main
   base_url: https://twoj-oauth-worker.workers.dev
-  auth_endpoint: auth   # ścieżka autoryzacji na Workerze — dopasuj do implementacji proxy
+  auth_endpoint: auth   # ścieżka autoryzacji na Workerze - dopasuj do implementacji proxy
 
 media_folder: "src/assets/uploads"
 public_folder: "/assets/uploads"
@@ -446,14 +446,14 @@ collections:
 <body></body></html>
 ```
 
-- Pola w `config.yml` muszą odzwierciedlać schemat Zod w `src/content/config.ts` — literówka w kluczu jednego bez drugiego wysypuje build albo psuje CMS UI po cichu.
+- Pola w `config.yml` muszą odzwierciedlać schemat Zod w `src/content/config.ts` - literówka w kluczu jednego bez drugiego wysypuje build albo psuje CMS UI po cichu.
 - Klient edytuje treść przez `/admin` → Decap commituje bezpośrednio do repo → Cloudflare Pages buduje i wdraża automatycznie (patrz sekcja 17).
 
 ## 17. Przygotowanie do wdrożenia
 
 **Domena i DNS:**
 - Nameservery domeny wskazane na Cloudflare (rejestrator → NS records).
-- Rekord `CNAME`/`A` projektu Pages — **proxied (pomarańczowa chmurka)**, nie "DNS only" — inaczej WAF/CDN/SSL Cloudflare nie działają.
+- Rekord `CNAME`/`A` projektu Pages - **proxied (pomarańczowa chmurka)**, nie "DNS only" - inaczej WAF/CDN/SSL Cloudflare nie działają.
 
 **SSL/TLS (dashboard → SSL/TLS):**
 - Tryb: **Full (strict)**.
@@ -461,7 +461,7 @@ collections:
 - Automatic HTTPS Rewrites: on.
 - HSTS: włączaj świadomie, dopiero po weryfikacji wszystkich subdomen (trudne do cofnięcia po `preload`).
 
-**Przekierowania — `public/_redirects`** (odpowiednik `.htaccess` na Cloudflare Pages; `.htaccess` to mechanizm Apache i tu nie ma zastosowania):
+**Przekierowania - `public/_redirects`** (odpowiednik `.htaccess` na Cloudflare Pages; `.htaccess` to mechanizm Apache i tu nie ma zastosowania):
 
 ```
 # stary URL → nowy, 301
@@ -471,21 +471,21 @@ collections:
 /blog/*   /aktualnosci/:splat   301
 ```
 
-⚠️ `_redirects` na Cloudflare Pages **nie wspiera flagi force (`!`) z Netlify** i **nie obsługuje przekierowań na poziomie całej domeny** (np. apex → `www`) — działa wyłącznie na ścieżkach w obrębie jednego projektu Pages. Dla apex↔www i innych przekierowań na poziomie strefy — **Redirect Rules** w dashboardzie Cloudflare, nie `_redirects`.
+⚠️ `_redirects` na Cloudflare Pages **nie wspiera flagi force (`!`) z Netlify** i **nie obsługuje przekierowań na poziomie całej domeny** (np. apex → `www`) - działa wyłącznie na ścieżkach w obrębie jednego projektu Pages. Dla apex↔www i innych przekierowań na poziomie strefy - **Redirect Rules** w dashboardzie Cloudflare, nie `_redirects`.
 
-**Cache — `public/_headers`:**
+**Cache - `public/_headers`:**
 
 ```
-# hashowane assety z builda Astro — cache na rok, bezpiecznie (nazwa pliku zmienia się przy zmianie treści)
+# hashowane assety z builda Astro - cache na rok, bezpiecznie (nazwa pliku zmienia się przy zmianie treści)
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
-# HTML — zawsze świeże
+# HTML - zawsze świeże
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
 ```
 
-⚠️ Cloudflare Pages **nie nadpisuje pasujących reguł `_headers`, tylko je łączy** — jeśli dwa wzorce pasują do tej samej ścieżki, wartości tego samego nagłówka zostają sklejone przecinkiem, nie nadpisane. Dlatego wzorce powyżej celowo się nie pokrywają (`/_astro/*` to tylko assety JS/CSS, `/*.html` to tylko strony) — nigdy nie dodawaj ogólnego `/*` obok bardziej szczegółowej reguły dla tego samego nagłówka, bo wynikowy `Cache-Control` będzie bez sensu dla obu.
+⚠️ Cloudflare Pages **nie nadpisuje pasujących reguł `_headers`, tylko je łączy** - jeśli dwa wzorce pasują do tej samej ścieżki, wartości tego samego nagłówka zostają sklejone przecinkiem, nie nadpisane. Dlatego wzorce powyżej celowo się nie pokrywają (`/_astro/*` to tylko assety JS/CSS, `/*.html` to tylko strony) - nigdy nie dodawaj ogólnego `/*` obok bardziej szczegółowej reguły dla tego samego nagłówka, bo wynikowy `Cache-Control` będzie bez sensu dla obu.
 
 **Checklist dashboardu Cloudflare przed pierwszym deployem:**
 - [ ] Custom domain podpięty do projektu Pages.
@@ -498,9 +498,9 @@ collections:
 
 ## 18. Gotowe szablony
 
-Kopiuj 1:1 do nowego projektu — zero pisania od zera.
+Kopiuj 1:1 do nowego projektu - zero pisania od zera.
 
-**`.gitignore`** (do roota, przed pierwszym commitem — jeśli sekret trafi do historii gita, samo dodanie do `.gitignore` już go nie usunie):
+**`.gitignore`** (do roota, przed pierwszym commitem - jeśli sekret trafi do historii gita, samo dodanie do `.gitignore` już go nie usunie):
 
 ```
 # --- Zależności ---
@@ -511,7 +511,7 @@ dist/
 .astro/
 .wrangler/
 
-# --- Zmienne środowiskowe (WRAŻLIWE — nigdy nie commituj) ---
+# --- Zmienne środowiskowe (WRAŻLIWE - nigdy nie commituj) ---
 .env
 .env.local
 .env.*.local
@@ -537,7 +537,7 @@ coverage/
 *.key
 ```
 
-**Strona 404** (`src/pages/404.astro` — Astro rozpoznaje ten plik automatycznie):
+**Strona 404** (`src/pages/404.astro` - Astro rozpoznaje ten plik automatycznie):
 
 ```astro
 ---
@@ -559,7 +559,7 @@ Astro.response.status = 404; // istotne tylko w trybie SSR, w SSG hosting robi t
 </html>
 ```
 
-**Stopka z automatycznym rokiem** — nigdy nie trzeba ręcznie aktualizować co styczeń:
+**Stopka z automatycznym rokiem** - nigdy nie trzeba ręcznie aktualizować co styczeń:
 
 ```html
 <footer>
@@ -573,13 +573,13 @@ const yearEl = document.querySelector('.js-current-year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 ```
 
-Wartość w `<span>` to fallback statyczny — jeśli JS się nie wykona, stopka i tak pokaże sensowny rok.
+Wartość w `<span>` to fallback statyczny - jeśli JS się nie wykona, stopka i tak pokaże sensowny rok.
 
 **`public/site.webmanifest`** (plik, na który wskazuje `<link rel="manifest">` w sekcji 9):
 
 ```json
 {
-  "name": "Nazwa Firmy — pełna nazwa",
+  "name": "Nazwa Firmy - pełna nazwa",
   "short_name": "Nazwa Firmy",
   "description": "Krótki opis strony/firmy.",
   "start_url": "/",

@@ -19,12 +19,12 @@ Nowy projekt powinien otrzymać gotowy fundament:
 ## Priorytety
 
 Niezależnie od projektu, każda strona budowana w oparciu o INIT Method ma spełniać ten sam standard:
-- **czysta architektura** — kod bez zbędnych abstrakcji, łatwy do utrzymania i rozbudowy,
-- **SEO-friendly** — techniczne SEO, semantyka, dane strukturalne od pierwszego dnia, nie jako poprawka na końcu,
-- **szybkie ładowanie i pełna optymalizacja** — Core Web Vitals jako twardy wymóg, nie sugestia,
-- **UX-friendly** — intuicyjna nawigacja i interakcje, bez zbędnego tarcia,
-- **accessibility-friendly** — zgodność z WCAG, strona dostępna niezależnie od sposobu korzystania z niej,
-- **najnowsze techniki** — aktualne standardy i podejścia, bez trzymania się przestarzałych praktyk "bo zawsze tak było".
+- **czysta architektura** - kod bez zbędnych abstrakcji, łatwy do utrzymania i rozbudowy,
+- **SEO-friendly** - techniczne SEO, semantyka, dane strukturalne od pierwszego dnia, nie jako poprawka na końcu,
+- **szybkie ładowanie i pełna optymalizacja** - Core Web Vitals jako twardy wymóg, nie sugestia,
+- **UX-friendly** - intuicyjna nawigacja i interakcje, bez zbędnego tarcia,
+- **accessibility-friendly** - zgodność z WCAG, strona dostępna niezależnie od sposobu korzystania z niej,
+- **najnowsze techniki** - aktualne standardy i podejścia, bez trzymania się przestarzałych praktyk "bo zawsze tak było".
 
 ## Tech-stack
 
