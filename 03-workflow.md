@@ -2,14 +2,14 @@
 
 Ścieżka produkcyjna projektu - 10 etapów, od discovery do utrzymania po starcie. Każdy etap ma jasne wyjście (deliverable), zanim przejdziesz dalej. Pomijanie etapów (najczęściej: Badanie SEO albo Architektura informacji) to najczęstsza przyczyna przeróbek na późniejszym etapie, nie oszczędność czasu.
 
-**Powiązanie z resztą INIT Method:** [`02-brief-template.md`](02-brief-template.md) wypełniasz w etapie 1 · [`01-guidelines.md`](01-guidelines.md) stosujesz w etapach 4–9 (odnośniki § przy każdym punkcie) · [`04-context.md`](04-context.md) aktualizujesz na bieżąco, w miarę podejmowania decyzji - nie czekaj do końca projektu.
+**Powiązanie z resztą INIT Method:** [`02-brief-template.md`](02-brief-template.md) wypełniasz w etapie 1 · [`01-guidelines.md`](01-guidelines.md) stosujesz w etapach 4-9 (odnośniki § przy każdym punkcie) · [`04-context.md`](04-context.md) aktualizujesz na bieżąco, w miarę podejmowania decyzji - nie czekaj do końca projektu.
 
 Domyślny stack realizacji: **Astro + Cloudflare Pages + Decap CMS** (zgodnie z `01-guidelines.md`). WordPress/inny hosting - tylko jako świadomy wyjątek, jeśli klient tego wymaga (np. przejęcie utrzymania przez inny zespół), nie jako równorzędna domyślna opcja.
 
 ## 1. Discovery i briefing
 
 - Wywiad z klientem: model biznesowy, USP, obszar działania → wypełnij `02-brief-template.md`.
-- Analiza konkurencji: 3–5 lokalnych + 1–2 wzorcowych.
+- Analiza konkurencji: 3-5 lokalnych + 1-2 wzorcowych.
 - Cele i mierzalne KPI (leady, telefony, formularz).
 - Zakres i harmonogram - zapis w CRM/notatniku projektowym.
 
@@ -38,13 +38,13 @@ Domyślny stack realizacji: **Astro + Cloudflare Pages + Decap CMS** (zgodnie z 
 - Wireframe: układ i hierarchia, bez kolorów/fontów.
 - Design system: paleta 2-kolorowa + akcent, skala typografii, siatka 8px.
 - UI hi-fi: mobile-first, kontrast wg WCAG AA ustalony już w designie, nie poprawiany po fakcie ([`01-guidelines.md` §11](01-guidelines.md#11-accessibility-a11y)).
-- Akceptacja klienta: max 1–2 warianty, ustalona z góry liczba rund poprawek.
+- Akceptacja klienta: max 1-2 warianty, ustalona z góry liczba rund poprawek.
 
 **Wyjście etapu:** projekt hi-fi zaakceptowany przez klienta.
 
 ## 5. Development
 
-- Setup projektu zgodny z [`01-guidelines.md` §2–3](01-guidelines.md#2-struktura-projektu) (struktura, `astro.config.mjs`, nazewnictwo).
+- Setup projektu zgodny z [`01-guidelines.md` §2-3](01-guidelines.md#2-struktura-projektu) (struktura, `astro.config.mjs`, nazewnictwo).
 - Komponenty i layout: semantyczny HTML, poprawna hierarchia nagłówków ([§4](01-guidelines.md#4-html---semantyka)).
 - SEO on-page: unikalne meta title/description, schema.org ([§9](01-guidelines.md#9-seo)).
 - Integracja CMS ([Decap, §16](01-guidelines.md#16-decap-cms)): test edycji z perspektywy klienta, nie tylko developera.

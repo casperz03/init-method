@@ -222,7 +222,7 @@ import heroImage from '../assets/hero.jpg';
 
 ## 9. SEO
 
-- Unikalny `<title>` (≤ 60 zn.) i `<meta name="description">` (≤ 155–160 zn.) na każdej podstronie.
+- Unikalny `<title>` (≤ 60 zn.) i `<meta name="description">` (≤ 155-160 zn.) na każdej podstronie.
 - Jeden `h1` zgodny z intencją wyszukiwania danej podstrony.
 - Semantyczny URL (kebab-case, bez zbędnych parametrów).
 - JSON-LD tam, gdzie dotyczy: `LocalBusiness`, `Article`, `FAQPage`, `BreadcrumbList`.
@@ -546,7 +546,7 @@ Astro.response.status = 404; // istotne tylko w trybie SSR, w SSG hosting robi t
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <title>404 – strona nie została znaleziona</title>
+  <title>404 - strona nie została znaleziona</title>
   <meta name="robots" content="noindex, follow" />
 </head>
 <body>
