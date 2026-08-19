@@ -37,7 +37,7 @@ Domyślnie: Astro (static) + vanilla CSS + GSAP + Decap CMS + Cloudflare Pages, 
 
 ## 3. Treść i struktura
 
-- Rzeczywista lista podstron (może różnić się od pierwotnego brief-u):
+- Rzeczywista lista podstron (może różnić się od pierwotnego briefu):
   - …
 - Collections w Decap CMS (`public/admin/config.yml`) i odpowiadające im schematy w `src/content/config.ts` - trzymaj oba w sync, patrz `01-guidelines.md` §16.
 - Język(i) treści.
