@@ -157,7 +157,14 @@ Konwencja: `--kategoria-wariant`, kebab-case, po angielsku.
 **GSAP — standard stacku, nie wyjątek:**
 
 - Do prostych przejść/hover/fade — zawsze czysty CSS (`transition`, `@keyframes`), taniej niż JS.
-- GSAP + `ScrollTrigger` — do scroll-triggered animacji, timeline'ów, złożonych sekwencji.
+- GSAP + `ScrollTrigger` — do scroll-triggered animacji, timeline'ów, złożonych sekwencji. **Wymaga jawnej rejestracji pluginu** przed użyciem, inaczej nie działa (bez błędu w konsoli — po prostu cicho nic się nie animuje):
+
+```js
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
+```
+
 - Ładuj tylko na stronach, które faktycznie animacji używają — nie globalnie do każdej podstrony (waga pliku wpływa na CWV).
 - **Musi respektować `prefers-reduced-motion`** — GSAP nie robi tego automatycznie:
 
@@ -415,6 +422,7 @@ backend:
   repo: nazwa-org/nazwa-repo
   branch: main
   base_url: https://twoj-oauth-worker.workers.dev
+  auth_endpoint: auth   # ścieżka autoryzacji na Workerze — dopasuj do implementacji proxy
 
 media_folder: "src/assets/uploads"
 public_folder: "/assets/uploads"
@@ -459,11 +467,11 @@ collections:
 # stary URL → nowy, 301
 /stara-podstrona   /nowa-podstrona   301
 
-# apex → www (albo odwrotnie — wybierz jedną formę, spójnie z sekcją 3 astro.config)
-https://domena.pl/*   https://www.domena.pl/:splat   301!
+# przekierowanie z zachowaniem ścieżki (splat)
+/blog/*   /aktualnosci/:splat   301
 ```
 
-Dla przekierowań na poziomie całej strefy (nie tylko w obrębie jednego projektu Pages) — **Redirect Rules** w dashboardzie Cloudflare zamiast `_redirects`.
+⚠️ `_redirects` na Cloudflare Pages **nie wspiera flagi force (`!`) z Netlify** i **nie obsługuje przekierowań na poziomie całej domeny** (np. apex → `www`) — działa wyłącznie na ścieżkach w obrębie jednego projektu Pages. Dla apex↔www i innych przekierowań na poziomie strefy — **Redirect Rules** w dashboardzie Cloudflare, nie `_redirects`.
 
 **Cache — `public/_headers`:**
 
