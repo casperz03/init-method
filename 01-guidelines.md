@@ -160,7 +160,7 @@ Konwencja: `--kategoria-wariant`, kebab-case, po angielsku.
 - GSAP + `ScrollTrigger` — do scroll-triggered animacji, timeline'ów, złożonych sekwencji. **Wymaga jawnej rejestracji pluginu** przed użyciem, inaczej nie działa (bez błędu w konsoli — po prostu cicho nic się nie animuje):
 
 ```js
-import gsap from 'gsap';
+import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 ```
@@ -484,6 +484,8 @@ collections:
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
 ```
+
+⚠️ Cloudflare Pages **nie nadpisuje pasujących reguł `_headers`, tylko je łączy** — jeśli dwa wzorce pasują do tej samej ścieżki, wartości tego samego nagłówka zostają sklejone przecinkiem, nie nadpisane. Dlatego wzorce powyżej celowo się nie pokrywają (`/_astro/*` to tylko assety JS/CSS, `/*.html` to tylko strony) — nigdy nie dodawaj ogólnego `/*` obok bardziej szczegółowej reguły dla tego samego nagłówka, bo wynikowy `Cache-Control` będzie bez sensu dla obu.
 
 **Checklist dashboardu Cloudflare przed pierwszym deployem:**
 - [ ] Custom domain podpięty do projektu Pages.
