@@ -559,21 +559,15 @@ Astro.response.status = 404; // istotne tylko w trybie SSR, w SSG hosting robi t
 </html>
 ```
 
-**Stopka z automatycznym rokiem** - nigdy nie trzeba ręcznie aktualizować co styczeń:
+**Stopka z automatycznym rokiem** - jeden wiersz, zero JS:
 
-```html
+```astro
 <footer>
-  <p>&copy; <span class="js-current-year">2026</span> Nazwa Firmy. Wszelkie prawa zastrzeżone.</p>
+  <p>&copy; {new Date().getFullYear()} Nazwa Firmy. Wszelkie prawa zastrzeżone.</p>
 </footer>
 ```
 
-```js
-// src/scripts/footer-year.js
-const yearEl = document.querySelector('.js-current-year');
-if (yearEl) yearEl.textContent = new Date().getFullYear();
-```
-
-Wartość w `<span>` to fallback statyczny - jeśli JS się nie wykona, stopka i tak pokaże sensowny rok.
+Wyrażenie `{}` w `.astro` liczy się w buildzie (SSG), nie w przeglądarce - stąd zero JS, zero `js-current-year`, zero osobnego pliku. Jedyny kompromis: rok "zamraża się" na wartości z ostatniego builda, nie z realnego czasu odwiedzającego. Dla stopki to nieistotne - projekt i tak rebuilduje się przy każdej zmianie treści przez Decap (§16), więc rok koryguje się sam najpóźniej przy pierwszym commicie po Nowym Roku. Jeśli projekt bywa całkowicie nieaktualizowany miesiącami na przełomie roku, rozważ dodanie tego jednego builda ręcznie w styczniu - to i tak tańsze niż utrzymywanie osobnego skryptu dla tak drobnej rzeczy.
 
 **`public/site.webmanifest`** (plik, na który wskazuje `<link rel="manifest">` w sekcji 9):
 
