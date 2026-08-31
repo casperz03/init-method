@@ -23,8 +23,14 @@ Domyślny wybór: **Astro static + Cloudflare Pages** dla całego katalogu proje
 
 - **DRY** - trzeci powtórzony blok = wydziel komponent `.astro`/zmienną CSS.
 - **KISS** - brak abstrakcji i bibliotek tam, gdzie wystarczy vanilla JS/CSS lub natywne API przeglądarki.
-- **Mobile-first** - style od najmniejszego viewportu w górę (`min-width` w media queries).
-- **Zgodność ze standardami** - aktualna specyfikacja HTML/CSS/JS, Core Web Vitals, Google Search Central.
+- **Mobile-first** - style od najmniejszego viewportu w górę, nowoczesna składnia range: `@media (width >= 768px)` zamiast `@media (min-width: 768px)`.
+- **Zgodność ze standardami** - [Baseline](https://web.dev/baseline) jako źródło prawdy o wsparciu w przeglądarkach ("czy mogę tego użyć" ma jedną odpowiedź, nie subiektywną ocenę), Core Web Vitals, Google Search Central.
+- **Lintery od pierwszego commitu** - `npm install -D eslint-plugin-astro eslint-config-prettier prettier-plugin-astro`.
+- **Komentarze** - tylko tam, gdzie kod sam nie tłumaczy "dlaczego" (ukryte ograniczenie, obejście buga, nieoczywisty powód decyzji). Zawsze po angielsku, nawet w projekcie PL-językowym - spójność z resztą kodu i narzędziami.
+
+**Praca z AI/agentem w tym repo:**
+- Przed implementacją nieznanego API/integracji - sprawdź aktualną dokumentację (MCP z docs, WebSearch), nie polegaj na pamięci modelu. Dokumentacja bibliotek zmienia się szybciej niż cykl treningowy.
+- Po każdej iteracji: commituj lokalnie, ale **zawsze pytaj przed PR/push** - i dodaj krótkie podsumowanie, co zrobiłeś w tej iteracji.
 
 ## 2. Struktura projektu
 
@@ -53,6 +59,7 @@ Domyślny wybór: **Astro static + Cloudflare Pages** dla całego katalogu proje
 - `src/pages/` wymagany - brak = brak routingu.
 - Własny kod (CSS/JS) zawsze w `src/`, nigdy w `public/` - tylko wtedy Astro go zbunduje i zoptymalizuje.
 - `public/` wyłącznie dla plików trafiających 1:1 do builda.
+- Skopiowane pliki INIT Method (`01-guidelines.md`, `04-context.md` i pochodne jak `CLAUDE.md`/`AGENTS.md`) trzymaj w `context/` w rootcie repo, nie luzem - jedno miejsce, w którym widać cały kontekst projektu naraz.
 
 **Konfiguracja bazowa (`astro.config.mjs`):**
 
@@ -67,6 +74,8 @@ export default defineConfig({
   // adapter NIE jest potrzebny dla output: 'static' - Cloudflare Pages serwuje build bezpośrednio
 });
 ```
+
+⚠️ `trailingSlash: 'always'` a sitemapa: `@astrojs/sitemap` normalizuje `<loc>` dla strony głównej dopiero po serializacji (wewnątrz `write-sitemap.js`), czego nie widać wprost w dokumentacji integracji. Przy niespójnym wyborze `trailingSlash` self-canonical (§9, liczony z `Astro.url`) i wpis w sitemapie mogą się cicho rozjechać, bez błędu buildu - sprawdź to ręcznie po pierwszym buildzie, nie zakładaj zgodności.
 
 ## 3. Konwencje nazewnictwa
 
@@ -92,7 +101,19 @@ export default defineConfig({
 
 ## 4. HTML - semantyka
 
-- Tagi HTML5: `header`, `nav`, `main`, `section`, `article`, `aside`, `footer`, `figure`, `time`, `dialog`.
+| Tag | Zastosowanie |
+|---|---|
+| `header` | Nagłówek strony lub sekcji (nie tylko góra strony - też np. nagłówek `article`) |
+| `nav` | Główna nawigacja i inne bloki linków nawigacyjnych (breadcrumbs, paginacja) |
+| `main` | Jedna na stronę - główna, unikalna treść (poza tym, co się powtarza w header/footer/nav) |
+| `section` | Tematyczna grupa treści z własnym nagłówkiem - nie zamiennik `div` |
+| `article` | Samodzielna treść, sensowna poza kontekstem strony (post bloga, karta usługi, opinia) |
+| `aside` | Treść poboczna względem głównej (sidebar, powiązane linki, cytat) |
+| `footer` | Stopka strony lub sekcji (autor, data, linki powiązane) |
+| `figure` + `figcaption` | Obraz/diagram/kod z podpisem, referencyjny z treści głównej |
+| `time` | Data/czas czytelna maszynowo (`datetime=""`) - istotne pod schema i crawlery |
+| `dialog` | Natywne modale - wbudowany focus trap i `::backdrop`, bez własnej implementacji JS |
+
 - Jeden `h1` na stronę, logiczna kolejność `h2 → h3` bez przeskoków.
 - `alt` na każdym obrazie treściowym (`alt=""` dla dekoracyjnych).
 - Formularze: `<label for="">` powiązane z polem, `required`, `autocomplete`, właściwy `type`.
@@ -114,37 +135,36 @@ export default defineConfig({
 - Jednostki świadomie: `rem` (typografia/spacing), `%`/`fr` (siatki), `svh/dvh` (pełnoekranowe sekcje - `dvh` zamiast `vh` na mobile, unika skoku przez pasek adresu), `clamp()` (płynna typografia bez sterty media queries), `min()`/`max()`.
 - Layout: flexbox/grid zamiast floatów/absolute tam, gdzie możliwe.
 
-**Custom properties w `:root`** (raz w `src/styles/global.css`, nigdy nie hardkoduj wartości w wielu plikach):
+**Warstwy (`@layer`)** - kolejność deklaracji ustala priorytet bez walki ze specyficznością, jedna deklaracja na cały projekt w `global.css`:
 
 ```css
-:root {
-  /* Kolory */
-  --color-primary: #1a56db;
-  --color-text: #111827;
-  --color-bg: #ffffff;
-  --color-border: #e5e7eb;
+@layer tokens, reset, components;
+```
 
-  /* Typografia */
-  --font-base: 'Inter', system-ui, sans-serif;
-  --font-size-lg: clamp(1.25rem, 2vw, 1.75rem);
-  --line-height-base: 1.6;
+**Kolory: OKLCH, nie HEX** - percepcyjnie jednolita przestrzeń (te same kroki liczbowe = ten sam odbierany kontrast), łatwiejsze świadome tworzenie wariantów (jaśniej/ciemniej bez zgadywania). Dwuwarstwowo: prymitywy (surowa paleta) → semantyka (jedyne zmienne używane poza warstwą `tokens`):
 
-  /* Spacing */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 2rem;
-  --space-xl: 4rem;
+```css
+@layer tokens {
+  :root {
+    --color-gray-50: oklch(98% 0.002 271);
+    --color-gray-900: oklch(19.5% 0.00002 271);
+    --color-blue-500: oklch(55.8% 0.189 259.9);
 
-  /* Layout */
-  --container-max-width: 1200px;
-  --radius-base: 0.5rem;
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 10%);
-  --transition-base: 0.2s ease-in-out;
+    --color-bg-canvas: var(--color-gray-50);
+    --color-text-primary: var(--color-gray-900);
+    --color-accent: var(--color-blue-500);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg-canvas: var(--color-gray-900);
+      --color-text-primary: var(--color-gray-50);
+    }
+  }
 }
 ```
 
-Konwencja: `--kategoria-wariant`, kebab-case, po angielsku.
+Konwencja: `--kategoria-wariant`, kebab-case, po angielsku. Pełny zestaw tokenów (spacing, typografia, cienie, z-index, czas trwania animacji) i pełny reset elementów - patrz [§18, Gotowe szablony](#18-gotowe-szablony).
 
 ## 6. JavaScript - vanilla + GSAP
 
@@ -241,6 +261,7 @@ interface Props {
   canonicalOverride?: string;
 }
 const { title, description, image = '/og-default.jpg', noindex = false, canonicalOverride } = Astro.props;
+const siteName = 'Nazwa Firmy';
 const canonical = canonicalOverride ?? new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL(image, Astro.site).href;
 ---
@@ -248,17 +269,31 @@ const ogImage = new URL(image, Astro.site).href;
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{title}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={canonical} />
+{!noindex && <link rel="canonical" href={canonical} />}
 {noindex && <meta name="robots" content="noindex, follow" />}
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content="pl_PL" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={title} />
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="theme-color" content="#1a56db" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="manifest" href="/site.webmanifest" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 ```
+
+⚠️ **`canonical` musi być warunkowy** (`{!noindex && ...}`) - bezwarunkowy `<link rel="canonical">` obok `noindex` (np. na stronie 404) daje dwa sprzeczne sygnały naraz: "to jest kanoniczny adres" i "nie indeksuj tego adresu". Łatwy do przeoczenia, bo strona wygląda i działa normalnie - to defekt, który propaguje się cicho na każdy projekt zbudowany z tego szablonu.
+
+**`<link rel="manifest">` - opcjonalny, nie domyślny.** Dla statycznej wizytówki bez service workera manifest nie daje nic poza ikoną na ekranie głównym telefonu. Dodawaj go (razem z plikiem z §18) tylko gdy realnie ma to znaczenie dla projektu (np. planowane PWA) - w przeciwnym razie pomiń i zaloguj w `04-context.md`, że to świadomy default tego projektu, nie odstępstwo od metody.
 
 ## 10. Lokalne SEO (projekty dla lokalnych firm)
 
@@ -346,6 +381,18 @@ GSAP tego nie respektuje automatycznie - sprawdzaj jawnie w JS (sekcja 6).
   Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'
 ```
 
+⚠️ **`script-src 'self'` blokuje inline-skrypty, które Astro potrafi wygenerować samo.** Małe, bezimportowe chunki JS Vite domyślnie inline'uje w HTML (poniżej `assetsInlineLimit`) - taki `<script>` bez `nonce`/hasha łamie CSP po cichu (menu mobilne, akordeon czy dowolna interakcja bez zewnętrznego importu przestaje działać, zero błędu poza CSP violation w konsoli). Wyłącz inlining plików `.js` w `astro.config.mjs`:
+
+```js
+export default defineConfig({
+  vite: {
+    build: {
+      assetsInlineLimit: (filePath) => (filePath.endsWith('.js') ? false : undefined),
+    },
+  },
+});
+```
+
 - **Cloudflare dashboard, SSL/TLS → Overview:** tryb **Full (strict)**. **Edge Certificates:** Always Use HTTPS = on. HSTS włączaj dopiero po potwierdzeniu, że wszystkie subdomeny wspierają HTTPS (preload jest trudny do cofnięcia).
 - **WAF managed rules + Bot Fight Mode** - włącz w dashboardzie, darmowe na każdym planie, minimalny wysiłek za realną ochronę.
 - SRI (`integrity` + `crossorigin`) przy skryptach z zewnętrznego CDN.
@@ -385,6 +432,7 @@ GSAP tego nie respektuje automatycznie - sprawdzaj jawnie w JS (sekcja 6).
 **`robots.txt`** - domyślnie wpuszczaj wszystko (klasyczne wyszukiwarki + boty AI search-time i treningowe), ogranicz świadomie per projekt:
 
 ```
+# robots.txt - wygenerowany wg INIT Method (github.com/casperz03/init-method)
 User-agent: *
 Allow: /
 Disallow: /admin/
@@ -394,7 +442,13 @@ Disallow: /*?utm_
 Sitemap: https://TWOJA-DOMENA.pl/sitemap-index.xml
 ```
 
-Jeśli klient nie chce treści w zbiorach treningowych AI, ale ma zostać widoczny w cytowaniach: `Disallow: /` dla `GPTBot`, `ClaudeBot`, `Google-Extended` - zostaw `Allow: /` dla `OAI-SearchBot`, `ChatGPT-User`, `Claude-SearchBot`, `PerplexityBot`.
+**Boty treningowe AI** (blokuj tylko na wyraźne życzenie klienta - "nie chcę, żeby moja treść trenowała modele"): `GPTBot`, `ClaudeBot`, `CCBot`, `Meta-ExternalAgent`, `Bytespider`, `Applebot-Extended`.
+
+⚠️ **`Google-Extended` nie da się czysto rozdzielić na "trening" i "cytowania"** - w przeciwieństwie do OpenAI/Anthropic (gdzie `GPTBot`/`ClaudeBot` to trening, a `OAI-SearchBot`/`Claude-SearchBot` to osobny sygnał cytowań), `Google-Extended` steruje jednocześnie treningiem **i** groundingiem/cytowaniami Gemini. Zablokowanie go nie chroni przed niczym więcej niż samo wyłączenie treningu (Google potwierdza brak wpływu na pozycje i AI Overviews), a kosztuje cytowania w Gemini. Blokuj świadomie, wiedząc że to pakiet "wszystko albo nic" - nie licz na to, że da się zjeść ciastko i je mieć.
+
+⚠️ **`Applebot-Extended` ≠ `Applebot`.** Zablokowanie pierwszego (trening Apple Intelligence) nie wycina drugiego - `Applebot` nadal indeksuje pod Siri i Spotlight. To dwa różne user-agenty o łudząco podobnych nazwach.
+
+Boty search-time/cytowania, warte trzymania otwartymi niezależnie od powyższego: `OAI-SearchBot`, `ChatGPT-User`, `Claude-SearchBot`, `Claude-User`, `PerplexityBot`, `Perplexity-User`.
 
 ⚠️ Każda dyrektywa musi należeć do grupy pod `User-agent:` - luźne `Disallow:` bez nagłówka grupy są ignorowane.
 
@@ -406,7 +460,7 @@ Nie jest to porada prawna - przypadki graniczne konsultuj z prawnikiem.
 - **Klauzula RODO (art. 13)** przy formularzu - krótka, bezpośrednio przy polu, nie tylko link.
 - Checkboxy zgód - zawsze **opt-in**, nigdy domyślnie zaznaczone.
 - **Cookies** - banner z granulacją (niezbędne / analityczne / marketingowe), skrypty trackingowe (GA4, Meta Pixel) ładowane dopiero **po** zgodzie, nie przed.
-  - Rozważ **Cloudflare Web Analytics** zamiast/obok GA4 - cookieless, nie wymaga bannera zgody dla samego trackingu ruchu.
+  - Rozważ **Cloudflare Web Analytics** zamiast/obok GA4 - cookieless, nie wymaga bannera zgody dla samego trackingu ruchu. ⚠️ Nie mierzy zdarzeń własnych (kliknięcie `mailto:`/`tel:`, wysłanie formularza) - jeśli projekt musi śledzić konwersje, nie tylko ruch, samo CWA nie wystarczy.
 - **EAA** - obowiązuje od 28.06.2025 w UE, dotyczy usług B2C. Mikroprzedsiębiorstwa (<10 zatrudnionych, obrót/suma bilansowa <2 mln EUR) zwolnione - zaznacz to klientowi, nie zakładaj automatycznie. Standard referencyjny: WCAG 2.1 AA (pokrywa się z sekcją 11).
 - **Regulamin** - wymagany tylko przy sprzedaży/koncie użytkownika, nie przy zwykłej wizytówce.
 
@@ -500,6 +554,136 @@ collections:
 
 Kopiuj 1:1 do nowego projektu - zero pisania od zera.
 
+**`<head>` - podstawa** (uzupełnij `SEOHead.astro` z §9 o to poniżej):
+
+```html
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+```
+
+**Reset + design tokeny** (`src/styles/global.css` - dostosuj tokeny kolorów/fontów pod projekt, nie kopiuj mechanicznie tego, czego projekt nie używa):
+
+```css
+@import '@fontsource-variable/nazwa-fontu';
+
+@layer tokens, reset, components;
+
+@layer tokens {
+  :root {
+    /* Kolory: prymitywy - surowa paleta, nie używaj poza tą warstwą */
+    --color-gray-50: oklch(98% 0.002 271);
+    --color-gray-500: oklch(60% 0.005 271);
+    --color-gray-900: oklch(19.5% 0.00002 271);
+    --color-blue-500: oklch(55.8% 0.189 259.9);
+
+    /* Kolory: semantyczne - jedyne dozwolone poza warstwą tokens */
+    --color-bg-canvas: var(--color-gray-50);
+    --color-text-primary: var(--color-gray-900);
+    --color-text-muted: var(--color-gray-500);
+    --color-accent: var(--color-blue-500);
+
+    /* Typografia */
+    --font-sans: 'Nazwa Fontu Variable', system-ui, sans-serif;
+    --text-size-md: 1rem;
+    --text-size-lg: clamp(1.125rem, 1.042rem + 0.417vw, 1.375rem);
+    --text-size-2xl: clamp(1.75rem, 1.5rem + 1.25vw, 2.5rem);
+
+    /* Spacing (siatka 4px/8px, nazwa = wartość w px) */
+    --space-16: 1rem;
+    --space-24: 1.5rem;
+    --space-80: 5rem;
+
+    /* Layout */
+    --container-max-width: 1440px;
+    --navbar-height: 80px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg-canvas: var(--color-gray-900);
+      --color-text-primary: var(--color-gray-50);
+    }
+  }
+}
+
+@layer reset {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--navbar-height);
+    color-scheme: light dark;
+  }
+
+  body {
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-canvas);
+    color: var(--color-text-primary);
+    line-height: 1.5;
+    text-wrap: pretty;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) { text-wrap: balance; }
+
+  ul[role="list"], ol[role="list"] { list-style-type: none; }
+
+  img, picture, svg, video, canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  table { border-collapse: collapse; width: 100%; }
+  textarea { resize: vertical; }
+
+  input, button, textarea, select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button, [type="button"], [type="submit"], select {
+    appearance: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  a { color: inherit; text-decoration: inherit; }
+
+  :focus:not(:focus-visible) { outline: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .container {
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin-inline: auto;
+    padding-inline: var(--space-16);
+
+    @media (width >= 768px) { padding-inline: var(--space-24); }
+    @media (width >= 1024px) { padding-inline: var(--space-80); }
+  }
+}
+```
+
+To zestaw bazowy - pełny reset (cienie, z-index, czasy animacji, kompletny reset formularzy) rozbudowuj per projekt wg realnej potrzeby.
+
 **`.gitignore`** (do roota, przed pierwszym commitem - jeśli sekret trafi do historii gita, samo dodanie do `.gitignore` już go nie usunie):
 
 ```
@@ -592,28 +776,31 @@ Wyrażenie `{}` w `.astro` liczy się w buildzie (SSG), nie w przeglądarce - st
 
 ## 19. Master checklist przed przekazaniem projektu
 
+Pozycje z tagiem dotyczą tylko projektów z danym zakresem - pomiń je świadomie, jeśli projekt nie ma formularzy/CMS/lokalnego SEO, zamiast odznaczać każdą jako "nie dotyczy" z osobna.
+
 **Kod:** struktura zgodna z sekcją 2 · `tsconfig` na `strictest` · zero duplikacji (DRY) · nazewnictwo zgodne z sekcją 3 · JS przez `.js-*`, nigdy `#id` · `.gitignore` uzupełniony **przed** pierwszym commitem · brak sekretów w repo.
 
 **SEO:** `site` ustawione w `astro.config.mjs` · `trailingSlash` spójne · unikalny title/description na każdej podstronie · self-canonical wszędzie · jeden `h1` · `robots.txt` + `sitemap.xml` · strona 404 z `noindex, follow` · OG + Twitter Card · JSON-LD (min. `LocalBusiness`/`Organization`) · `llms.txt`.
 
-**Lokalne SEO** (przy projektach dla lokalnych firm): NAP spójny wszędzie · schema `LocalBusiness` z adresem/geo/godzinami · Google Business Profile założony i powiązany z domeną · mapa Google na stronie kontaktowej · adres/telefon/godziny w tekście, nie tylko na obrazku.
+**Lokalne SEO** `[local]` (przy projektach dla lokalnych firm): NAP spójny wszędzie · schema `LocalBusiness` z adresem/geo/godzinami · Google Business Profile założony i powiązany z domeną · mapa Google na stronie kontaktowej · adres/telefon/godziny w tekście, nie tylko na obrazku.
 
 **Wydajność:** LCP bez lazy + `fetchpriority="high"` · obrazy poniżej foldu lazy z `width`/`height` · fonty self-hosted `.woff2` + `swap` · Lighthouse: LCP < 2.5s, INP < 200ms, CLS < 0.1.
 
 **Accessibility:** kontrast WCAG AA · nawigacja klawiaturą + `:focus-visible` · skip link · `alt` wszędzie · `prefers-reduced-motion` respektowane (w tym w GSAP).
 
-**Bezpieczeństwo:** `_headers` z CSP/HSTS/X-Frame-Options · SSL/TLS Full (strict) + Always Use HTTPS · WAF + Bot Fight Mode on · formularz z honeypotem · `npm audit` czysty.
+**Bezpieczeństwo:** `_headers` z CSP/HSTS/X-Frame-Options · SSL/TLS Full (strict) + Always Use HTTPS · WAF + Bot Fight Mode on · formularz z honeypotem `[form]` · `npm audit` czysty.
 
 **Prawo:** polityka prywatności (jeśli formularz) · klauzula RODO przy formularzu · zgody opt-in · banner cookies z granulacją (jeśli tracking) · sprawdzone EAA.
 
 **Cloudflare/deploy:** DNS proxied · `_redirects` z mapowaniem starych URL (jeśli redesign) · custom domain aktywny · zmienne środowiskowe w dashboardzie, nie w kodzie.
 
-**CMS:** `/admin` dostępny, OAuth Worker działa, klient przetestował dodanie/edycję treści.
+**CMS** `[cms]`: `/admin` dostępny, OAuth Worker działa, klient przetestował dodanie/edycję treści.
 
 **Ostatnie sprawdzenie:** favicon + `site.webmanifest` · rok w stopce automatyczny · GSC + analytics podłączone i zweryfikowane · test na realnym urządzeniu mobilnym · linki wewnętrzne/zewnętrzne bez 404, `target="_blank" rel="noopener"` przy zewnętrznych.
 
 ## 20. Referencje
 
+- Baseline (wsparcie przeglądarek): [web.dev/baseline](https://web.dev/baseline)
 - Astro: [docs.astro.build](https://docs.astro.build/) · [struktura projektu](https://docs.astro.build/en/basics/project-structure/) · [obrazy](https://docs.astro.build/en/guides/images/) · [sitemap](https://docs.astro.build/en/guides/integrations-guide/sitemap/) · [View Transitions](https://docs.astro.build/en/guides/view-transitions/)
 - MDN: [developer.mozilla.org](https://developer.mozilla.org/)
 - GSAP: [gsap.com/docs](https://gsap.com/docs/)

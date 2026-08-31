@@ -25,7 +25,12 @@ Po wypełnieniu: dane biznesowe/prawne zostają w tym pliku, dane techniczne/bra
 - **USP** - czym klient różni się od konkurencji (w jego własnych słowach, nie w Twoich domysłach).
 - **Grupa docelowa** - kto ma wejść na stronę: demografia, potrzeby, etap decyzji zakupowej. Jeśli więcej niż jedna grupa - priorytet.
 - **Cel strony** - leady telefoniczne? formularz? sprzedaż online? wizerunek/portfolio? rezerwacje?
-- **Mierzalne KPI** - konkretna liczba/wskaźnik, nie "więcej klientów". Np. "10 formularzy/miesiąc", "wzrost pozycji na 5 fraz do top 10".
+- **Mierzalne KPI** - konkretna liczba/wskaźnik, nie "więcej klientów". Ustal na trzech horyzontach, nie jednej dacie:
+  - **0-3 mies.:** techniczne/procesowe (strona zaindeksowana, formularz wysyła bez błędów, CWV w normie).
+  - **3-6 mies.:** wczesne sygnały ruchu (np. top 10 na 5 fraz, X sesji/miesiąc z organic).
+  - **6-12 mies.:** biznesowe (np. 10 formularzy/miesiąc, X% konwersji, wzrost przychodu).
+  - *Wizytówka lokalna:* 0-3 = zaindeksowana + GBP zweryfikowany → 3-6 = top 10 na 3 frazy lokalne → 6-12 = 15 telefonów/miesiąc z wizytówki.
+  - *Sklep:* 0-3 = checkout bez błędów, płatności działają → 3-6 = 100 sesji/miesiąc z organic → 6-12 = 2% conversion rate.
 - **Budżet i harmonogram** - twardy deadline (event, sezon, kampania)? Jeśli tak - od niego licz wstecz etapy z `03-workflow.md`.
 
 ## 3. Konkurencja i inspiracje

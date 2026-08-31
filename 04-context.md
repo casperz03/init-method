@@ -23,12 +23,12 @@ Domyślnie: Astro (static) + vanilla CSS + GSAP + Decap CMS + Cloudflare Pages, 
 
 ## 2. Branding
 
-- **Kolory** (wartości do `:root` w `global.css`, `01-guidelines.md` §5):
+- **Kolory** (wartości do warstwy `tokens` w `global.css`, format OKLCH - `01-guidelines.md` §5):
 
 ```css
---color-primary: #______;
---color-text: #______;
---color-bg: #______;
+--color-accent: oklch(___% ___ ___);
+--color-text-primary: oklch(___% ___ ___);
+--color-bg-canvas: oklch(___% ___ ___);
 ```
 
 - **Fonty:** (nazwa, źródło - self-hosted zgodnie z §8)
@@ -80,3 +80,21 @@ Krótki, chronologiczny zapis - nie protokół, tylko decyzje, które warto pami
 | Data | Decyzja | Powód |
 |---|---|---|
 | | | |
+
+## 8. Stan etapów
+
+Odzwierciedla 11 etapów z [`03-workflow.md`](03-workflow.md) - aktualizuj przy przejściu do kolejnego etapu, nie retrospektywnie. Pusta komórka = etap pominięty, nie zapomniany do wypełnienia później - jeśli świadomie pomijasz etap, wpisz "pominięty" zamiast zostawiać puste pole, żeby dało się to odróżnić od zwykłego zaległego wpisu.
+
+| Etap | Status | Data |
+|---|---|---|
+| 1. Discovery i briefing | | |
+| 2. Badanie SEO | | |
+| 3. Architektura informacji | | |
+| 4. Design (Figma) | | |
+| 5. Development | | |
+| 6. Wdrożenie treści | | |
+| 7. Legal | | |
+| 8. Optymalizacja przed startem | | |
+| 9. Testy i własny przegląd kodu | | |
+| 10. Wdrożenie produkcyjne | | |
+| 11. Po starcie | | |

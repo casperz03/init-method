@@ -1,8 +1,8 @@
 # 03 · Workflow
 
-Ścieżka produkcyjna projektu - 10 etapów, od discovery do utrzymania po starcie. Każdy etap ma jasne wyjście (deliverable), zanim przejdziesz dalej. Pomijanie etapów (najczęściej: Badanie SEO albo Architektura informacji) to najczęstsza przyczyna przeróbek na późniejszym etapie, nie oszczędność czasu.
+Ścieżka produkcyjna projektu - 11 etapów, od discovery do utrzymania po starcie. Każdy etap ma jasne wyjście (deliverable), zanim przejdziesz dalej - odnotuj je w [`04-context.md`](04-context.md), sekcja "Stan etapów", w momencie ukończenia, nie retrospektywnie. Pomijanie etapów (najczęściej: Badanie SEO albo Architektura informacji) to najczęstsza przyczyna przeróbek na późniejszym etapie, nie oszczędność czasu - a bez odnotowanego wyjścia pominięcie nie zostawia żadnego śladu do wykrycia.
 
-**Powiązanie z resztą INIT Method:** [`02-brief-template.md`](02-brief-template.md) wypełniasz w etapie 1 · [`01-guidelines.md`](01-guidelines.md) stosujesz w etapach 4-9 (odnośniki § przy każdym punkcie) · [`04-context.md`](04-context.md) aktualizujesz na bieżąco, w miarę podejmowania decyzji - nie czekaj do końca projektu.
+**Powiązanie z resztą INIT Method:** [`02-brief-template.md`](02-brief-template.md) wypełniasz w etapie 1 · [`01-guidelines.md`](01-guidelines.md) stosujesz w etapach 4-10 (odnośniki § przy każdym punkcie) · [`04-context.md`](04-context.md) aktualizujesz na bieżąco, w miarę podejmowania decyzji - nie czekaj do końca projektu.
 
 Domyślny stack realizacji: **Astro + Cloudflare Pages + Decap CMS** (zgodnie z `01-guidelines.md`). WordPress/inny hosting - tylko jako świadomy wyjątek, jeśli klient tego wymaga (np. przejęcie utrzymania przez inny zespół), nie jako równorzędna domyślna opcja.
 
@@ -10,7 +10,7 @@ Domyślny stack realizacji: **Astro + Cloudflare Pages + Decap CMS** (zgodnie z 
 
 - Wywiad z klientem: model biznesowy, USP, obszar działania → wypełnij `02-brief-template.md`.
 - Analiza konkurencji: 3-5 lokalnych + 1-2 wzorcowych.
-- Cele i mierzalne KPI (leady, telefony, formularz).
+- Cele i mierzalne KPI (leady, telefony, formularz) - patrz `02-brief-template.md` §2 (horyzonty 0-3/3-6/6-12 mies.).
 - Zakres i harmonogram - zapis w CRM/notatniku projektowym.
 
 **Wyjście etapu:** wypełniony brief, zaakceptowany zakres i harmonogram.
@@ -59,16 +59,25 @@ Domyślny stack realizacji: **Astro + Cloudflare Pages + Decap CMS** (zgodnie z 
 
 **Wyjście etapu:** strona z docelową treścią, bez placeholderów.
 
-## 7. Optymalizacja przed startem
+## 7. Legal
+
+- Polityka prywatności przygotowana/zaadaptowana na podstawie briefu ([`02-brief-template.md`](02-brief-template.md) §8) - administrator, cel, podstawa prawna, okres przechowywania.
+- Klauzula RODO (art. 13) przy formularzu kontaktowym wdrożona, nie tylko opisana ([`01-guidelines.md` §15](01-guidelines.md#15-prawo-rodo-eaa-cookies)).
+- Banner cookies z granulacją zgód wdrożony i przetestowany - skrypty trackingowe ładują się dopiero po zgodzie, nie przed.
+- Sprawdzone, czy klient podlega EAA (mikroprzedsiębiorstwo - zwolnienie informacyjne, nie gwarancja prawna).
+- Regulamin przygotowany, jeśli projekt sprzedaje online.
+
+**Wyjście etapu:** komplet dokumentów prawnych opublikowany i wdrożony technicznie - nie tylko istnieje jako plik gdzieś obok.
+
+## 8. Optymalizacja przed startem
 
 - Core Web Vitals: LCP < 2.5s, CLS < 0.1, INP < 200ms ([§8](01-guidelines.md#8-wydajność--core-web-vitals)).
-- Dostępność WCAG/EAA: kontrast, focus states, nawigacja klawiaturą ([§11](01-guidelines.md#11-accessibility-a11y), [§15](01-guidelines.md#15-prawo-rodo-eaa-cookies)).
-- RODO/cookies: realny wybór, polityka prywatności, zgody opt-in ([§15](01-guidelines.md#15-prawo-rodo-eaa-cookies)).
+- Dostępność WCAG/EAA: kontrast, focus states, nawigacja klawiaturą ([§11](01-guidelines.md#11-accessibility-a11y)).
 - `sitemap.xml` i `robots.txt`: sprawdź, czy nie blokują strony przypadkiem ([§9](01-guidelines.md#9-seo), [§14](01-guidelines.md#14-seo-pod-aillm-geo)).
 
 **Wyjście etapu:** strona spełniająca Master checklist z [`01-guidelines.md` §19](01-guidelines.md#19-master-checklist-przed-przekazaniem-projektu).
 
-## 8. Testy i własny przegląd kodu
+## 9. Testy i własny przegląd kodu
 
 - Responsywność: realne breakpointy 375/768/1024/1440px.
 - Cross-browser: Chrome, Safari (iOS), Firefox.
@@ -78,7 +87,7 @@ Domyślny stack realizacji: **Astro + Cloudflare Pages + Decap CMS** (zgodnie z 
 
 **Wyjście etapu:** lista poprawek posortowana wg priorytetu, zero błędów blokujących.
 
-## 9. Wdrożenie produkcyjne
+## 10. Wdrożenie produkcyjne
 
 - Deploy: Cloudflare Pages ([§17](01-guidelines.md#17-przygotowanie-do-wdrożenia)). Hostinger/inny hosting tylko przy WordPressie.
 - Domena, SSL, DNS - jeden wariant www/non-www wymuszony, spójnie z `trailingSlash` ([§2](01-guidelines.md#2-struktura-projektu)).
@@ -86,10 +95,12 @@ Domyślny stack realizacji: **Astro + Cloudflare Pages + Decap CMS** (zgodnie z 
 
 **Wyjście etapu:** strona live na docelowej domenie, HTTPS wymuszony, przekierowania poprawne.
 
-## 10. Po starcie
+## 11. Po starcie
 
 - Zgłoszenie sitemap w Google Search Console, indeksacja kluczowych podstron.
 - Monitoring indeksacji przez pierwsze 2 tygodnie.
 - GA4 lub Cloudflare Web Analytics ([§15](01-guidelines.md#15-prawo-rodo-eaa-cookies)): cele/eventy pod konwersje, połączenie z GSC.
 
 **Wyjście etapu:** projekt zamknięty, klient przeszkolony z CMS, monitoring uruchomiony.
+
+**Jeśli etap został pominięty:** nie nadrabiaj go przed deployem na przeczuciach - nadrób po deployu, na realnych danych z GSC/analytics. Pominięty etap 2 (SEO) np. widać dopiero w braku fraz w nagłówkach - to sygnał do korekty na danych, nie powód do opóźniania startu.

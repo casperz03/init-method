@@ -38,12 +38,13 @@ Projekt domyślnie przygotowany pod: **Astro**, **vanilla CSS**, **GSAP**, **Clo
 | [`02-brief-template.md`](02-brief-template.md) | Szablon briefu klienta - jakie informacje zebrać przed startem projektu. |
 | [`03-workflow.md`](03-workflow.md) | Workflow realizacji projektu - ścieżka produkcyjna krok po kroku. |
 | [`04-context.md`](04-context.md) | Kontekst projektu - co musi znać developer i AI, żeby pracować spójnie ze stackiem i decyzjami. |
+| [`05-pulapki.md`](05-pulapki.md) | Krótka lista nieoczywistych gotchy z realnych projektów - do wklejenia w CLAUDE.md/AGENTS.md. |
 
 ## Jak używać
 
-1. Skopiuj cztery pliki `.md` do nowego projektu.
+1. Skopiuj pięć plików `.md` do nowego projektu (najlepiej do folderu `context/` - patrz `01-guidelines.md` §2).
 2. Wypełnij `02-brief-template.md` na podstawie rozmowy z klientem.
-3. Uzupełnij `04-context.md` o specyfikę danego projektu (branding, treści, ograniczenia).
-4. Prowadź projekt zgodnie z `03-workflow.md`, trzymając się zasad z `01-guidelines.md`.
+3. Uzupełnij `04-context.md` o specyfikę danego projektu (branding, treści, ograniczenia) i aktualizuj "Stan etapów" w miarę postępu.
+4. Prowadź projekt zgodnie z `03-workflow.md`, trzymając się zasad z `01-guidelines.md` i `05-pulapki.md`.
 
 *INIT Method nie jest gotowym szablonem strony. Jest systemem organizacji i realizacji projektu, który można wykorzystać jako bazę przy każdym kolejnym wdrożeniu.*
